@@ -1,0 +1,18 @@
+stages:
+- nightly
+
+nightly:
+  stage: deploy
+  script:
+  - pwd
+  - fastlane update_fastlane
+  - fastlane --version
+  artifacts:
+    paths:
+    - ./*.dSYM.zip
+    expire_in: 4 week
+  only:
+  - triggers
+  - schedules
+  tags:
+  - localair
