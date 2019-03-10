@@ -2,6 +2,8 @@
 
 Informal ranked tournaments
 
+![Screenshots of rivaly](http://url/to/img.png)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
