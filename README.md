@@ -2,7 +2,7 @@
 
 Informal ranked tournaments
 
-![Screenshots of rivaly](http://url/to/img.png)
+![Screenshots of rivaly](https://raw.githubusercontent.com/simonbengtsson/rivaly/master/screenshots.png)
 
 ## Getting Started
 
