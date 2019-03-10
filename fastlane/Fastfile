@@ -1,0 +1,14 @@
+update_fastlane
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    build_app(
+        workspace: "./ios/Runner.xcworkspace",
+        scheme: "Runner"
+    )
+    upload_to_testflight(
+        ipa: "./ios/Runner.ipa"
+    )
+  end
+end

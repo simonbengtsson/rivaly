@@ -1,0 +1,3 @@
+app_identifier("com.rivalyapp.rivalyapp") # The bundle identifier of your app
+itc_team_id("118281422") # App Store Connect Team ID
+team_id("UA664XCLRX") # Developer Portal Team ID
