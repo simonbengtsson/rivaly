@@ -123,7 +123,7 @@ PODS:
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
-  - Flutter (from `.symlinks/flutter/ios-release`)
+  - Flutter (from `.symlinks/flutter/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
 
 SPEC REPOS:
@@ -152,7 +152,7 @@ EXTERNAL SOURCES:
   firebase_core:
     :path: ".symlinks/plugins/firebase_core/ios"
   Flutter:
-    :path: ".symlinks/flutter/ios-release"
+    :path: ".symlinks/flutter/ios"
   image_picker:
     :path: ".symlinks/plugins/image_picker/ios"
 
