@@ -15,6 +15,29 @@ class League {
   }
 }
 
+class Outcome {
+  static const win = 'win';
+  static const loss = "loss";
+}
+
+class Result {
+  String id;
+  String opponentId;
+  String hostId;
+  Outcome outcome;
+
+  Result(DocumentSnapshot snap) {
+    id = snap.documentID;
+    opponentId = snap.data["opponentId"];
+    hostId = snap.data["hostId"];
+    outcome = snap.data["outcome"];
+
+    if (opponentId == null || hostId == null || outcome == null) {
+      throw FormatException("Could not decode Result");
+    }
+  }
+}
+
 class Member {
   String id;
   String name;

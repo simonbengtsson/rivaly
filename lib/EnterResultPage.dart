@@ -4,16 +4,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rivaly/models.dart';
 
-class EnterResultsScreen extends StatelessWidget {
-  int mySavedRating = 100;
-  int opponentSavedRating = 100;
-
-  Member opponent;
+class EnterResultsScreen extends StatefulWidget {
+  final Member opponent;
 
   EnterResultsScreen({this.opponent});
 
-  // ELO Rankings
-  // Inspiration from https://github.com/moroshko/elo.js/blob/master/elo.js
+  @override
+  _EnterResultsScreenState createState() => _EnterResultsScreenState();
+}
+
+class _EnterResultsScreenState extends State<EnterResultsScreen> {
+  int mySavedRating = 100;
+
+  int opponentSavedRating = 100;
+
+  String outcome = Outcome.win;
+
   int getRatingDelta(double myGameResult, int myRating, int opponentRating) {
     if ([0, 0.5, 1].indexOf(myGameResult) == -1) {
       return null;
@@ -33,29 +39,18 @@ class EnterResultsScreen extends StatelessWidget {
             shape: BoxShape.circle,
             image: new DecorationImage(
                 fit: BoxFit.fill,
-                image: NetworkImage(this.opponent.picture)
+                image: NetworkImage(this.widget.opponent.picture)
             )
         )
     );
 
     return Scaffold(
+      appBar: AppBar(title: Text("Enter Results"), actions: <Widget>[
+        IconButton(icon: Icon(Icons.send), onPressed: () {})
+      ]),
       body: SafeArea(
           child: Column(
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(Icons.close)),
-                  ),
-                  Text('Enter results',
-                      style: TextStyle(fontWeight: FontWeight.w900, fontSize: 30))
-                ],
-              ),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Align(
@@ -73,27 +68,35 @@ class EnterResultsScreen extends StatelessWidget {
                         children: <Widget>[
                           opponentImage,
                           Container(width: 10),
-                          Text(this.opponent.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black54)),
+                          Text(this.widget.opponent.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black54)),
                         ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text('Winner',
+                              style:
+                              TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                        ),
                       ),
                       Align(
                         alignment: Alignment.topLeft,
-                        child: Text('Winner',
-                            style:
-                            TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                      ),
-                      DropdownButton<String>(
-                        value: 'Me',
-                        onChanged: (String newValue) {
-                          print(newValue);
-                        },
-                        items: <String>['Me', 'Opponent'].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        })
-                            .toList(),
+                        child: DropdownButton<String>(
+                          value: this.outcome,
+                          onChanged: (String newValue) {
+                            this.setState(() {
+                              this.outcome = newValue;
+                            });
+                          },
+                          items: <String>[Outcome.win, Outcome.loss].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value == Outcome.win ? 'Me' : 'Opponent'),
+                            );
+                          })
+                              .toList(),
+                        ),
                       )
                     ],
                   ),
