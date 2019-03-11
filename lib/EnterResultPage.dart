@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rivaly/models.dart';
@@ -16,18 +17,47 @@ class EnterResultsScreen extends StatefulWidget {
 class _EnterResultsScreenState extends State<EnterResultsScreen> {
   int mySavedRating = 100;
 
-  int opponentSavedRating = 100;
-
   String outcome = Outcome.win;
 
-  int getRatingDelta(double myGameResult, int myRating, int opponentRating) {
+  int getNewRating(double myGameResult, int targetRating, int opponentRating) {
     if ([0, 0.5, 1].indexOf(myGameResult) == -1) {
       return null;
     }
 
-    var myChanceToWin = 1 / (1 + pow(10, (opponentRating - myRating) / 400));
+    var myChanceToWin = 1 / (1 + pow(10, (opponentRating - targetRating) / 400));
 
-    return (32 * (myGameResult - myChanceToWin)).round();
+    var delta = (32 * (myGameResult - myChanceToWin)).round();
+
+    return targetRating + delta;
+  }
+
+  _submitResults() async {
+    var currentUser = await User.currentUser();
+    var me = await Member.fetch(League.demoLeagueId, currentUser.id);
+
+    var gameResult = this.outcome == Outcome.win ? 1.0 : 0.0;
+    var myNewRating = this.getNewRating(gameResult, me.score, this.widget.opponent.score);
+
+    var opponentGameResult = this.outcome == Outcome.loss ? 1.0 : 0.0;
+    var opponentNewRating = this.getNewRating(opponentGameResult, this.widget.opponent.score, me.score);
+
+    var batch = Firestore.instance.batch();
+
+
+    var resultsDoc = Firestore.instance
+        .collection("leagues/${League.demoLeagueId}/results").document();
+    var result = Result(resultsDoc.documentID, null, null, outcome);
+    batch.setData(resultsDoc, result.encode());
+
+    var meDoc = Firestore.instance
+        .document("leagues/${League.demoLeagueId}/members/${me.id}");
+    batch.updateData(meDoc, {'score': myNewRating});
+
+    var opponentDoc = Firestore.instance
+        .document("leagues/${League.demoLeagueId}/members/${this.widget.opponent.id}");
+    batch.updateData(opponentDoc, {'score': opponentNewRating});
+
+    await batch.commit();
   }
 
   @override
@@ -46,7 +76,10 @@ class _EnterResultsScreenState extends State<EnterResultsScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text("Enter Results"), actions: <Widget>[
-        IconButton(icon: Icon(Icons.send), onPressed: () {})
+        IconButton(icon: Icon(Icons.send), onPressed: () async {
+          await _submitResults();
+          Navigator.pop(context);
+        })
       ]),
       body: SafeArea(
           child: Column(
