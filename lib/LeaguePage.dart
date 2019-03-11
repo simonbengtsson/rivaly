@@ -54,7 +54,7 @@ class _LeaguePageState extends State<LeaguePage> {
     });
   }
 
-  void _settingModalBottomSheet(context) {
+  void _settingModalBottomSheet(BuildContext context) {
     showModalBottomSheet(context: context, builder: (BuildContext bc) {
       return Container(
         child: SafeArea(
@@ -65,12 +65,12 @@ class _LeaguePageState extends State<LeaguePage> {
                   title: new Text('Logout'),
                   onTap: () async {
                     await FirebaseAuth.instance.signOut();
+                    Navigator.pop(context);
                     Navigator.pushReplacement(
-                        context,
-                        FadeInSlideOutRoute(
-                            builder: (context) =>
-                                OnboardingPage()
-                        )
+                      context,
+                      FadeInSlideOutRoute(
+                          builder: (context) => OnboardingPage()
+                      )
                     );
                   }
               ),
@@ -192,14 +192,15 @@ class _RankingListState extends State<RankingList> {
           IconButton(
               icon: Icon(Icons.cake),
               color: primaryColor,
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          EnterResultsScreen(opponent: member),
-                      fullscreenDialog: true),
+                          EnterResultPage(opponent: member),
+                          fullscreenDialog: true),
                 );
+                _fetchData();
               }
           )
         ],

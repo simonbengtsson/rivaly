@@ -5,16 +5,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rivaly/models.dart';
 
-class EnterResultsScreen extends StatefulWidget {
+class EnterResultPage extends StatefulWidget {
   final Member opponent;
 
-  EnterResultsScreen({this.opponent});
+  EnterResultPage({this.opponent});
 
   @override
-  _EnterResultsScreenState createState() => _EnterResultsScreenState();
+  _EnterResultPageState createState() => _EnterResultPageState();
 }
 
-class _EnterResultsScreenState extends State<EnterResultsScreen> {
+class _EnterResultPageState extends State<EnterResultPage> {
   int mySavedRating = 100;
 
   String outcome = Outcome.win;
