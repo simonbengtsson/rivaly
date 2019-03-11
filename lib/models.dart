@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class League {
 
@@ -27,9 +30,11 @@ class Result {
   String id;
   String opponentId;
   String hostId;
-  Outcome outcome;
+  String outcome;
 
-  Result(DocumentSnapshot snap) {
+  Result(this.id, this.opponentId, this.hostId, this.outcome);
+
+  Result.decode(DocumentSnapshot snap) {
     id = snap.documentID;
     opponentId = snap.data["opponentId"];
     hostId = snap.data["hostId"];
@@ -38,6 +43,15 @@ class Result {
     if (opponentId == null || hostId == null || outcome == null) {
       throw FormatException("Could not decode Result");
     }
+  }
+
+  Map<String, dynamic> encode() {
+    return {
+      'id': id,
+      'opponentId': opponentId,
+      'hostId': hostId,
+      'outcome': outcome
+    };
   }
 }
 
@@ -61,6 +75,12 @@ class User {
       "picture": picture
     };
   }
+
+  static Future<User> currentUser() async {
+    var prefs = await SharedPreferences.getInstance();
+    var jsonString = prefs.getString("currentUser");
+    return User.decode(jsonDecode(jsonString));
+  }
 }
 
 class Member {
@@ -69,6 +89,15 @@ class Member {
   int score;
 
   Member(this.id, this.user, this.score);
+
+  static Future<Member> fetch(String leagueId, String userId) async {
+    var snap = await Firestore.instance
+        .document("leagues/$leagueId/members/$userId").get();
+    var userSnap = await Firestore.instance
+        .document("users/$userId").get();
+    print("User: $userId");
+    return Member.decode(snap, userSnap);
+  }
 
   Member.decode(DocumentSnapshot memberSnap, DocumentSnapshot userSnap) {
     id = memberSnap.documentID;

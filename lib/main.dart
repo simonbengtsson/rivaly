@@ -29,10 +29,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   _setup() async {
-    var prefs = await SharedPreferences.getInstance();
-    var jsonString = prefs.getString("currentUser");
-    var user = User.decode(jsonDecode(jsonString));
-
+    var user = await User.currentUser();
     this.setState(() {
       this.currentUser = user;
       this.loading = false;
@@ -41,16 +38,13 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    var currentUser = FirebaseAuth.instance.currentUser();
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-      statusBarColor: Colors.black, //or set color with: Color(0xFF0000FF)
-    ));
+    print("heyy");
     return MaterialApp(
       title: 'Rivaly',
       theme: ThemeData(
         primarySwatch: primaryColor,
       ),
-      home: this.loading ? null : this.currentUser == null ? OnboardingPage() : LeaguePage(),
+      home: this.loading ? null : this.currentUser == null ? OnboardingPage() : LeaguePage(League.demoLeagueId),
       debugShowCheckedModeBanner: false,
     );
   }

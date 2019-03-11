@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rivaly/LeaguePage.dart';
 import 'package:rivaly/models.dart';
@@ -29,6 +30,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+      statusBarColor: Colors.black, //or set color with: Color(0xFF0000FF)
+    ));
   }
 
   Future getImage() async {
@@ -98,11 +102,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       borderRadius: BorderRadius.circular(30.0)),
 
                   onPressed: this.actionButtonDisabled ? null : () async {
+                    print("HEJ");
                     this.setState(() { this.actionButtonDisabled = true; });
                     await _signUp();
                     Navigator.pushReplacement(
                       context,
-                      FadeInSlideOutRoute(builder: (context) => LeaguePage()),
+                      FadeInSlideOutRoute(builder: (context) => LeaguePage(League.demoLeagueId)),
                     );
                   },
                   child: Text(
