@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rivaly/LeaguePage.dart';
+import 'package:rivaly/models.dart';
 
 const primaryColor = Colors.purple;
 
@@ -15,7 +18,10 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   File _image;
+  final nameFieldController = TextEditingController();
+  bool actionButtonDisabled = true;
 
   @override
   void initState() {
@@ -28,6 +34,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
     setState(() {
       _image = image;
     });
+  }
+
+  _signUp() async {
+    var firebaseUser = await _auth.signInAnonymously();
+    var user = User.create(firebaseUser.uid, nameFieldController.text, null);
+    await Firestore.instance
+        .document("users/${firebaseUser.uid}")
+        .setData(user.encode());
   }
 
   @override
@@ -48,7 +62,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text('Join Stena Center PingPong league',
+              Text('Join SF PingPong league',
                   style: TextStyle(fontWeight: FontWeight.w900, fontSize: 40)),
               Container(height: 25),
               GestureDetector(
@@ -57,15 +71,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
               Container(height: 25),
               TextField(
                 style: TextStyle(fontSize: 40, color: Colors.black87),
-                decoration:
-                InputDecoration(border: InputBorder.none, hintText: 'Name'),
+                controller: nameFieldController,
+                textCapitalization: TextCapitalization.words,
+                onChanged: (text) {
+                  this.setState(() {
+                    this.actionButtonDisabled = text.length < 3;
+                  });
+                },
+                decoration: InputDecoration(border: InputBorder.none, hintText: 'Name'),
               ),
               Container(height: 25),
               SizedBox(
                 child: RaisedButton(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0)),
-                  onPressed: () {
+
+                  onPressed: this.actionButtonDisabled ? null : () async {
+                    this.actionButtonDisabled = true;
+                    await _signUp();
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => LeaguePage()),

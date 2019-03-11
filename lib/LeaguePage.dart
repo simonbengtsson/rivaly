@@ -148,7 +148,7 @@ class _RankingListState extends State<RankingList> {
                             shape: BoxShape.circle,
                             image: new DecorationImage(
                                 fit: BoxFit.fill,
-                                image: NetworkImage(member.picture)))),
+                                image: NetworkImage(member.user.picture)))),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -168,7 +168,7 @@ class _RankingListState extends State<RankingList> {
                         )
                       ],
                     ),
-                    title: Text("${index + 1} ${member.name}", style: listTextStyle),
+                    title: Text("${index + 1} ${member.user.name}", style: listTextStyle),
                   ));
             })
             .values

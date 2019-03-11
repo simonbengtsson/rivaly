@@ -38,18 +38,35 @@ class Result {
   }
 }
 
-class Member {
+class User {
   String id;
   String name;
   String picture;
+
+  User.create(this.id, this.name, this.picture);
+
+  User(DocumentSnapshot snap) {
+    id = snap.documentID;
+    name = snap.data["firstName"];
+    picture = snap.data["picture"] ?? "https://randomuser.me/api/portraits/women/78.jpg";
+  }
+
+  Map<String, dynamic> encode() {
+    return {
+      "firstName": name,
+      "picture": picture
+    };
+  }
+}
+
+class Member {
+  String id;
+  User user;
   int score;
 
   Member(DocumentSnapshot memberSnap, DocumentSnapshot userSnap) {
-    var memberData = memberSnap.data;
     id = memberSnap.documentID;
-    var userData = userSnap.data;
-    score = memberData["score"];
-    name = userData["first_name"];
-    picture = userData["picture"] ?? "https://randomuser.me/api/portraits/women/78.jpg";
+    user = User(userSnap);
+    score = memberSnap.data["score"];
   }
 }

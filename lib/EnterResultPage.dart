@@ -39,7 +39,7 @@ class _EnterResultsScreenState extends State<EnterResultsScreen> {
             shape: BoxShape.circle,
             image: new DecorationImage(
                 fit: BoxFit.fill,
-                image: NetworkImage(this.widget.opponent.picture)
+                image: NetworkImage(this.widget.opponent.user.picture)
             )
         )
     );
@@ -68,7 +68,7 @@ class _EnterResultsScreenState extends State<EnterResultsScreen> {
                         children: <Widget>[
                           opponentImage,
                           Container(width: 10),
-                          Text(this.widget.opponent.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black54)),
+                          Text(this.widget.opponent.user.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black54)),
                         ],
                       ),
                       Padding(
