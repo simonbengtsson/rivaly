@@ -7,7 +7,6 @@ import 'package:rivaly/OnboardingPage.dart';
 import 'package:rivaly/models.dart';
 
 const primaryColor = Colors.purple;
-const demoLeagueId = "fOfk8aa6Z3xsbJbVGDff";
 
 class FadeInSlideOutRoute<T> extends MaterialPageRoute<T> {
   FadeInSlideOutRoute({WidgetBuilder builder, RouteSettings settings})
@@ -44,7 +43,7 @@ class _LeaguePageState extends State<LeaguePage> {
 
   _fetchData() async {
     var snap =
-        await Firestore.instance.document('leagues/$demoLeagueId').get();
+        await Firestore.instance.document('leagues/${League.demoLeagueId}').get();
 
     setState(() {
       _league = League(snap);
@@ -145,7 +144,7 @@ class _RankingListState extends State<RankingList> {
 
   _fetchData() async {
     var membersSnap = await Firestore.instance
-        .collection('leagues/$demoLeagueId/members')
+        .collection('leagues/${League.demoLeagueId}/members')
         .getDocuments();
     Map<String, DocumentSnapshot> userMap = Map();
     var users = await _fetchRelations(
@@ -155,7 +154,7 @@ class _RankingListState extends State<RankingList> {
         }).toList());
     setState(() {
       _members = membersSnap.documents.toList().map((snap) {
-        return Member(snap, users[snap.documentID]);
+        return Member.decode(snap, users[snap.documentID]);
       }).toList();
     });
   }

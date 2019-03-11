@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:rivaly/LeaguePage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rivaly/OnboardingPage.dart';
+import 'package:rivaly/models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 void main() => runApp(MyApp());
 
@@ -17,7 +20,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
 
   bool loading = false;
-  FirebaseUser currentUser;
+  User currentUser;
 
   @override
   void initState() {
@@ -26,7 +29,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   _setup() async {
-    var user = await FirebaseAuth.instance.currentUser();
+    var prefs = await SharedPreferences.getInstance();
+    var jsonString = prefs.getString("currentUser");
+    var user = User.decode(jsonDecode(jsonString));
+
     this.setState(() {
       this.currentUser = user;
       this.loading = false;

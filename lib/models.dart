@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class League {
+
+  static const demoLeagueId = "fOfk8aa6Z3xsbJbVGDff";
+
   String id;
   String picture;
   String name;
@@ -43,16 +46,17 @@ class User {
   String name;
   String picture;
 
-  User.create(this.id, this.name, this.picture);
+  User(this.id, this.name, this.picture);
 
-  User(DocumentSnapshot snap) {
-    id = snap.documentID;
-    name = snap.data["firstName"];
-    picture = snap.data["picture"] ?? "https://randomuser.me/api/portraits/women/78.jpg";
+  User.decode(Map<String, dynamic> data) {
+    id = data["id"];
+    name = data["firstName"];
+    picture = data["picture"] ?? "https://randomuser.me/api/portraits/women/78.jpg";
   }
 
   Map<String, dynamic> encode() {
     return {
+      "id": id,
       "firstName": name,
       "picture": picture
     };
@@ -64,9 +68,22 @@ class Member {
   User user;
   int score;
 
-  Member(DocumentSnapshot memberSnap, DocumentSnapshot userSnap) {
+  Member(this.id, this.user, this.score);
+
+  Member.decode(DocumentSnapshot memberSnap, DocumentSnapshot userSnap) {
     id = memberSnap.documentID;
-    user = User(userSnap);
     score = memberSnap.data["score"];
+
+    var data = userSnap.data;
+    data["id"] = userSnap.documentID;
+    user = User.decode(data);
   }
+
+  Map<String, dynamic> encode() {
+    return {
+      'score': score,
+      'userId': user.id
+    };
+  }
+
 }
