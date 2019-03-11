@@ -161,6 +161,7 @@ class _RankingListState extends State<RankingList> {
       _members = membersSnap.documents.toList().map((snap) {
         return Member.decode(snap, users[snap.documentID]);
       }).toList();
+      _members.sort((one, two) => two.score - one.score);
     });
   }
 
