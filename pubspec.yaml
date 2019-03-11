@@ -31,6 +31,7 @@ dev_dependencies:
   firebase_core: ^0.3.1
   firebase_auth: ^0.8.1
   cloud_firestore: ^0.9.5
+  shared_preferences: ^0.5.1
 
 
 # For information on the generic Dart part of this file, see the
