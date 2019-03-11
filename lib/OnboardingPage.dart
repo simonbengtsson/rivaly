@@ -87,11 +87,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       borderRadius: BorderRadius.circular(30.0)),
 
                   onPressed: this.actionButtonDisabled ? null : () async {
-                    this.actionButtonDisabled = true;
+                    this.setState(() { this.actionButtonDisabled = true; });
                     await _signUp();
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => LeaguePage()),
+                      FadeInSlideOutRoute(builder: (context) => LeaguePage()),
                     );
                   },
                   child: Text(

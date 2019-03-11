@@ -1,11 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rivaly/EnterResultPage.dart';
+import 'package:rivaly/OnboardingPage.dart';
 import 'package:rivaly/models.dart';
 
 const primaryColor = Colors.purple;
 const demoLeagueId = "fOfk8aa6Z3xsbJbVGDff";
+
+class FadeInSlideOutRoute<T> extends MaterialPageRoute<T> {
+  FadeInSlideOutRoute({WidgetBuilder builder, RouteSettings settings})
+      : super(builder: builder, settings: settings);
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    if (settings.isInitialRoute) return child;
+    // Fades between routes. (If you don't want any animation,
+    // just return child.)
+    if (animation.status == AnimationStatus.reverse)
+      return super.buildTransitions(context, animation, secondaryAnimation, child);
+    return FadeTransition(opacity: animation, child: child);
+  }
+}
 
 class LeaguePage extends StatefulWidget {
   @override
@@ -33,10 +51,42 @@ class _LeaguePageState extends State<LeaguePage> {
     });
   }
 
+  void _settingModalBottomSheet(context) {
+    showModalBottomSheet(context: context, builder: (BuildContext bc) {
+      return Container(
+        child: SafeArea(
+          child: new Wrap(
+            children: <Widget>[
+              new ListTile(
+                  leading: new Icon(Icons.exit_to_app),
+                  title: new Text('Logout'),
+                  onTap: () async {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.pushReplacement(
+                        context,
+                        FadeInSlideOutRoute(
+                            builder: (context) =>
+                                OnboardingPage()
+                        )
+                    );
+                  }
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    var signOutButton = IconButton(icon: Icon(Icons.more_horiz), onPressed: () async {
+      _settingModalBottomSheet(context);
+    });
+
     return Scaffold(
-      appBar: AppBar(title: Text("Rivaly")),
+      appBar: AppBar(title: Text("Rivaly"), actions: <Widget>[signOutButton],),
       body: _league == null ? Text("Loading...") : buildLeague(_league),
     );
   }
