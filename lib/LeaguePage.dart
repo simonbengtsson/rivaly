@@ -58,11 +58,11 @@ class _LeaguePageState extends State<LeaguePage> {
     showModalBottomSheet(context: context, builder: (BuildContext bc) {
       return Container(
         child: SafeArea(
-          child: new Wrap(
+          child: Wrap(
             children: <Widget>[
-              new ListTile(
-                  leading: new Icon(Icons.exit_to_app),
-                  title: new Text('Logout'),
+              ListTile(
+                  leading: Icon(Icons.exit_to_app),
+                  title: Text('Logout'),
                   onTap: () async {
                     await FirebaseAuth.instance.signOut();
                     Navigator.pop(context);
@@ -73,7 +73,7 @@ class _LeaguePageState extends State<LeaguePage> {
                       )
                     );
                   }
-              ),
+              )
             ],
           ),
         ),
@@ -139,6 +139,7 @@ class RankingList extends StatefulWidget {
 class _RankingListState extends State<RankingList> {
   String _leagueId;
   List<Member> _members;
+  User _currentUser;
 
   _RankingListState(String leagueId) {
     _leagueId = leagueId;
@@ -154,7 +155,9 @@ class _RankingListState extends State<RankingList> {
         membersSnap.documents.toList().map((snap) {
           return snap.documentID;
         }).toList());
+    var user = await User.currentUser();
     setState(() {
+      _currentUser = user;
       _members = membersSnap.documents.toList().map((snap) {
         return Member.decode(snap, users[snap.documentID]);
       }).toList();
@@ -175,7 +178,9 @@ class _RankingListState extends State<RankingList> {
   }
 
   ListTile _listItem(int index, Member member) {
-    var listTextStyle =  TextStyle(fontWeight: FontWeight.w500, fontSize: 18);
+    var isMe = member.id == _currentUser.id;
+    var meString = isMe ? "(me)" : "";
+    var listTextStyle = TextStyle(fontWeight: isMe ? FontWeight.w700 : FontWeight.w500, fontSize: 18);
     return ListTile(
       leading: new Container(
           width: 35,
@@ -205,7 +210,7 @@ class _RankingListState extends State<RankingList> {
           )
         ],
       ),
-      title: Text("${index + 1} ${member.user.name}", style: listTextStyle),
+      title: Text("${index + 1} ${member.user.name} ${meString}", style: listTextStyle),
     );
   }
 
