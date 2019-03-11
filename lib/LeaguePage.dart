@@ -197,7 +197,7 @@ class _RankingListState extends State<RankingList> {
           IconButton(
               icon: Icon(Icons.cake),
               color: primaryColor,
-              onPressed: () async {
+              onPressed: isMe ? null : () async {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
