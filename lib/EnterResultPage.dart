@@ -46,7 +46,7 @@ class _EnterResultPageState extends State<EnterResultPage> {
 
     var resultsDoc = Firestore.instance
         .collection("leagues/${League.demoLeagueId}/results").document();
-    var result = Result(resultsDoc.documentID, null, null, outcome);
+    var result = Result(resultsDoc.documentID, this.widget.opponent.id, me.id, outcome);
     batch.setData(resultsDoc, result.encode());
 
     var meDoc = Firestore.instance
