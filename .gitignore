@@ -8,6 +8,10 @@
 .buildlog/
 .history
 .svn/
+*.ipa
+*.dSYM.zip
+fastlane/report.xml
+fastlane/README.md
 
 # IntelliJ related
 *.iml

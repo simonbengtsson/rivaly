@@ -7,8 +7,6 @@ platform :ios do
         workspace: "./ios/Runner.xcworkspace",
         scheme: "Runner"
     )
-    upload_to_testflight(
-        ipa: "./ios/Runner.ipa"
-    )
+    upload_to_testflight
   end
 end
