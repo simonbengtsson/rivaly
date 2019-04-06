@@ -66,6 +66,10 @@ class User {
     id = data["id"];
     name = data["firstName"];
     picture = data["picture"] ?? "https://randomuser.me/api/portraits/women/78.jpg";
+
+    if (id == null || name == null || picture == null) {
+      throw new Exception("Invalid user $id");
+    }
   }
 
   Map<String, dynamic> encode() {
@@ -79,6 +83,7 @@ class User {
   static Future<User> currentUser() async {
     var prefs = await SharedPreferences.getInstance();
     var jsonString = prefs.getString("currentUser");
+    if (jsonString == null) return null;
     return User.decode(jsonDecode(jsonString));
   }
 }

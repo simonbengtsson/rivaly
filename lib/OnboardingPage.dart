@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:rivaly/LeaguePage.dart';
 import 'package:rivaly/models.dart';
 import 'dart:convert';
@@ -36,7 +35,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var image; //await ImagePicker.pickImage(source: ImageSource.gallery);
 
     setState(() {
       _image = image;
@@ -44,11 +43,21 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   _signUp() async {
-    var firebaseUser = await _auth.signInAnonymously();
+    var firebaseUser;
+    print("BEFORE AUTH");
+    try {
+      firebaseUser = await _auth.signInAnonymously();
+    } catch (e) {
+      print("AUTH TESSTING");
+      print(e.toString());
+      throw e;
+    }
+    print("AUTH AFTER");
     var user = User(firebaseUser.uid, nameFieldController.text, null);
     await Firestore.instance
         .document("users/${firebaseUser.uid}")
         .setData(user.encode());
+    print("AUTH users");
 
     var member = Member(user.id, user, 900);
     await Firestore.instance
@@ -57,6 +66,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     var prefs = await SharedPreferences.getInstance();
     var jsonString = jsonEncode(user.encode());
     await prefs.setString("currentUser", jsonString);
+    print("AUTH done");
   }
 
   @override
